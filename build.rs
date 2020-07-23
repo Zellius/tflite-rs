@@ -141,6 +141,19 @@ fn prepare_tensorflow_library() {
             } else {
                 make.arg("micro");
             }
+
+            {
+                let mut arg_from_env = |key| {
+                    if let Ok(value) = env::var(key) {
+                        make.arg(format!("{}={}", key, value));
+                    }
+                };
+
+                arg_from_env("CC");
+                arg_from_env("CXX");
+                arg_from_env("AR");
+            }
+
             make.current_dir(make_dir);
             eprintln!("make command = {:?} in dir  {:?}", make, make_dir);
             if !make.status().expect("failed to run make command").success() {
